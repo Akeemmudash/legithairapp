@@ -1,0 +1,11 @@
+export const BASE_URL = "https://legithairng.com/backend";
+// export const BASE_URL = "http://testbackendproject.pluralcode.academy";
+export const LOGIN_URL = "user/login-user";
+export const SIGN_UP_URL = "user/register-user";
+export const PRODUCT_URL = "user/get-products?page=0";
+export const RATE_RODUCT_URL = "user/save-and-rate-products?product_id=1&rating=5";
+export const SAVE_PRODUCT_URL = "user/save-and-rate-products?product_id=1";
+export const CREATE_ORDER_URL = "user/create-orders";
+export const UPDATE_PROFILE_URL = "user/update-profile";
+export const UPDATE_PASSWORD_URL = "user/update-password";
+export const ORDER_HISTORY_URL = "user/users-order-history";
