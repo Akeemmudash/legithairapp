@@ -19,7 +19,8 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.oracle01.legithair"
+      "package": "com.oracle01.legithair",
+      "versionCode": 14
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -28,6 +29,19 @@
       "eas": {
         "projectId": "754a7f8f-ef48-40e2-95a4-6264e3ea9366"
       }
-    }
+    },
+    "cli": {
+      "appVersionSource": "local"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/754a7f8f-ef48-40e2-95a4-6264e3ea9366"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-asset"
+    ]
   }
 }

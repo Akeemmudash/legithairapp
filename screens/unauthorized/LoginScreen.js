@@ -1,13 +1,14 @@
 
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import MainContainer from '../../components/MainContainer';
 import { Colors } from '../../utilities/colors';
 import CustomTextInput from '../../components/CustomTextInput';
 import HorizontalDashComponent from '../../components/HorizontalDashComponent';
 import CustomButton from '../../components/CustomButton';
-import Logo from "../../assets/svg/Logo.svg";
+// import Logo from "../../assets/svg/Logo.svg";
+import Logo from "../../assets/logo.png"
 import { Formik } from 'formik';
 import { LoginSchema } from '../../utilities/schemas/authentication';
 import { useLoginUserMutation } from '../../redux/features/auth/authApi';
@@ -85,8 +86,16 @@ const LoginScreen = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <MainContainer>
+        {/* <View style={styles.Logo}>
+          <Logo width={100} height={100} />
+        </View> */}
+
         <View style={styles.Logo}>
-          <Logo />
+          <Image 
+            source={Logo} 
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
         <Text style={styles.Heading}>Welcome Back</Text>
@@ -168,17 +177,18 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
   },
-  Logo: {
+  // Logo: {
+  //   alignSelf: "center",
+  //   marginVertical: 20,
+  // },
+   Logo: {
     alignSelf: "center",
     marginVertical: 20,
   },
-  // Heading: {
-  //   color: Colors.Black_00,
-  //   fontSize: 24,
-  //   fontWeight: "600",
-  //   paddingBottom: 20,
-  // },
-
+  logoImage: {
+    width: 120,          
+    height: 120,          
+  },
   Heading: {
     fontSize: 16,
     fontWeight: '600',
