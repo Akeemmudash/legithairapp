@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "legithair",
+    "name": "Legit Hair",
     "slug": "legithair",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,14 +12,19 @@
       "backgroundColor": "#FF962E"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.techstackcompany.legithair",
+      "buildNumber": "4",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.oracle01.legithair",
+      "package": "com.techstackcompany.legithair",
       "versionCode": 14
     },
     "web": {
@@ -27,21 +32,20 @@
     },
     "extra": {
       "eas": {
-        "projectId": "754a7f8f-ef48-40e2-95a4-6264e3ea9366"
+        "projectId": "9dbe32c8-6739-4268-ba90-e161791219be"
       }
     },
     "cli": {
       "appVersionSource": "local"
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/754a7f8f-ef48-40e2-95a4-6264e3ea9366"
     },
     "plugins": [
       "expo-font",
       "expo-asset"
-    ]
+    ],
+    "owner": "techstackcompany"
   }
 }

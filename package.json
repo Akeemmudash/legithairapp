@@ -4,8 +4,8 @@
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start --tunnel",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -19,16 +19,17 @@
     "@reduxjs/toolkit": "^2.2.7",
     "axios": "^1.7.3",
     "debounce": "^2.1.0",
-    "expo": "^53.0.0",
+    "expo": "~53.0.27",
     "expo-asset": "~11.1.7",
     "expo-clipboard": "~7.1.5",
+    "expo-dev-client": "~5.2.4",
     "expo-env": "^1.1.1",
     "expo-font": "~13.3.2",
     "expo-linear-gradient": "~14.1.5",
     "expo-sharing": "~13.1.5",
     "expo-splash-screen": "~0.30.10",
     "expo-status-bar": "~2.2.3",
-    "expo-updates": "~0.28.17",
+    "expo-updates": "~0.28.18",
     "flutterwave-react-native": "^1.0.4",
     "formik": "^2.4.6",
     "i18next": "^23.12.2",
@@ -58,7 +59,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@babel/plugin-transform-template-literals": "^7.24.7"
+    "@babel/plugin-transform-template-literals": "^7.24.7",
+    "baseline-browser-mapping": "^2.10.21"
   },
   "private": true
 }
