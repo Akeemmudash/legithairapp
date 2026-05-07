@@ -140,13 +140,15 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 import PhoneNumberInput from 'react-native-phone-number-input';
 import { Colors } from '../utilities/colors';
 
-const CustomTextInput = ({ label, type, value, onChangeText, onChangeFormattedText }) => {
+const CustomTextInput = ({ label, type, value, onChangeText, onChangeFormattedText, isInvalid, error }) => {
+    const inputStyle = [styles.input, isInvalid && styles.inputError];
+
     const renderInput = () => {
         switch (type) {
             case 'email':
                 return (
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
                         onChangeText={onChangeText}
                         value={value}
                         keyboardType="email-address"
@@ -161,7 +163,7 @@ const CustomTextInput = ({ label, type, value, onChangeText, onChangeFormattedTe
                         layout="first"
                         onChangeFormattedText={onChangeFormattedText}
                         value={value}
-                        containerStyle={styles.phoneInputContainer}
+                        containerStyle={[styles.phoneInputContainer, isInvalid && styles.inputError]}
                         textContainerStyle={styles.phoneInputTextContainer}
                         textInputStyle={styles.phoneInputText}
                         codeTextStyle={styles.phoneInputCodeText}
@@ -173,7 +175,7 @@ const CustomTextInput = ({ label, type, value, onChangeText, onChangeFormattedTe
             case 'name':
                 return (
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
                         onChangeText={onChangeText}
                         value={value}
                         autoCapitalize="words"
@@ -183,17 +185,17 @@ const CustomTextInput = ({ label, type, value, onChangeText, onChangeFormattedTe
             case 'number':
                 return (
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
                         onChangeText={onChangeText}
                         value={value}
-                        keyboardType="numeric"
+                        keyboardType="phone-pad"
                         selectionColor={Colors.Black}
                     />
                 );
             case 'password':
                 return (
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
                         onChangeText={onChangeText}
                         value={value}
                         secureTextEntry
@@ -203,7 +205,7 @@ const CustomTextInput = ({ label, type, value, onChangeText, onChangeFormattedTe
             default:
                 return (
                     <TextInput
-                        style={styles.input}
+                        style={inputStyle}
                         onChangeText={onChangeText}
                         value={value}
                         selectionColor={Colors.Black}
@@ -216,6 +218,7 @@ const CustomTextInput = ({ label, type, value, onChangeText, onChangeFormattedTe
         <View style={styles.container}>
             <Text style={styles.label}>{label}</Text>
             {renderInput()}
+            {isInvalid && error ? <Text style={styles.errorText}>{error}</Text> : null}
         </View>
     );
 };
@@ -239,6 +242,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: Colors.White,
         fontFamily: "Poppins"
+    },
+    inputError: {
+        borderColor: 'red',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 12,
+        marginTop: 4,
+        fontFamily: "Poppins",
     },
     phoneInputContainer: {
         borderColor: Colors.Orange,
