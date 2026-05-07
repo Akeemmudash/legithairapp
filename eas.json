@@ -8,16 +8,25 @@
       "developmentClient": true,
       "distribution": "internal",
       "autoIncrement": true,
-      "channel": "development"
+      "channel": "development",
+      "ios": {
+        "image": "latest"
+      }
     },
     "preview": {
       "distribution": "internal",
       "autoIncrement": true,
-      "channel": "preview"
+      "channel": "preview",
+      "ios": {
+        "image": "latest"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "channel": "production"
+      "channel": "production",
+      "ios": {
+        "image": "latest"
+      }
     }
   },
   "submit": {
