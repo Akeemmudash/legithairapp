@@ -1,43 +1,55 @@
-
-
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
-import MainContainer from '../../components/MainContainer';
-import { Colors } from '../../utilities/colors';
-import CustomTextInput from '../../components/CustomTextInput';
-import HorizontalDashComponent from '../../components/HorizontalDashComponent';
-import CustomButton from '../../components/CustomButton';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  Image,
+} from "react-native";
+import MainContainer from "../../components/MainContainer";
+import { Colors } from "../../utilities/colors";
+import CustomTextInput from "../../components/CustomTextInput";
+import HorizontalDashComponent from "../../components/HorizontalDashComponent";
+import CustomButton from "../../components/CustomButton";
 // import Logo from "../../assets/svg/Logo.svg";
-import Logo from "../../assets/logo.png"
-import { Formik } from 'formik';
-import { LoginSchema } from '../../utilities/schemas/authentication';
-import { useLoginUserMutation } from '../../redux/features/auth/authApi';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateUser } from '../../redux/features/auth/authSlice';
-import ROUTES from '../../Navigation/routes';
-import StatusModal from '../../components/StatusModal';
+import Logo from "../../assets/logo.png";
+import { Formik } from "formik";
+import { LoginSchema } from "../../utilities/schemas/authentication";
+import { useLoginUserMutation } from "../../redux/features/auth/authApi";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "../../redux/features/auth/authSlice";
+import ROUTES from "../../Navigation/routes";
+import StatusModal from "../../components/StatusModal";
 
 const LoginScreen = ({ navigation }) => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const dispatch = useDispatch();
   const [modalAlertVisible, setModalAlertVisible] = useState(false);
-  const [modalContent, setModalContent] = useState({ icon: '', message: '', buttonColor: "" });
+  const [modalContent, setModalContent] = useState({
+    icon: "",
+    message: "",
+    buttonColor: "",
+  });
   const handleCloseModal = () => {
     setModalAlertVisible(false);
   };
 
-  const { full_name, phone, token, id } = useSelector(state => state.userAuth);
-  console.log(full_name, phone, id, token)
+  const { full_name, phone, token, id } = useSelector(
+    (state) => state.userAuth,
+  );
 
   const handleSignIn = async (values) => {
     try {
-      console.log("Attempting to log in with values:", values);
       const response = await loginUser(values).unwrap();
-      console.log("Login response:", response);
+      console.log("after", values);
 
-      if (response?.message === "login successful") {
-        console.log("tokenssss", response.token)
+      if (
+        response?.token ||
+        response?.message?.toLowerCase() === "login successful"
+      ) {
         const user = {
           token: response.token,
           phone: response.user.phone_number,
@@ -46,56 +58,54 @@ const LoginScreen = ({ navigation }) => {
           id: response.user.id,
         };
 
-        console.log("User object:", user);
-
         dispatch(updateUser(user));
-        await AsyncStorage.setItem('token', response.token);
+        await AsyncStorage.setItem("token", response.token);
         setModalContent({
-          icon: 'checkmark-circle-outline',
-          message: 'You have successfully logged in!',
+          icon: "checkmark-circle-outline",
+          message: "You have successfully logged in!",
           buttonColor: Colors.Orange,
-          iconColor: Colors.Orange
+          iconColor: Colors.Orange,
         });
         setModalAlertVisible(true);
 
         setTimeout(() => {
           // navigation.navigate(ROUTES.MAIN);
-          navigation.navigate(ROUTES.MAIN)
-      }, 1000);
+          navigation.navigate(ROUTES.MAIN);
+        }, 1000);
       } else {
         setModalContent({
-          icon: 'close-circle-outline',
-          message: 'We noticed that your username and password dont match.',
+          icon: "close-circle-outline",
+          message: "We noticed that your username and password dont match.",
           buttonColor: Colors.Orange,
-          iconColor: Colors.Orange
+          iconColor: Colors.Orange,
         });
         setModalAlertVisible(true);
       }
     } catch (error) {
       console.error("Login error", error);
       setModalContent({
-        icon: 'close-circle-outline',
-        message: error?.data?.message || error || 'An unexpected error occurred',
+        icon: "close-circle-outline",
+        message:
+          error?.data?.message || error || "An unexpected error occurred",
         buttonColor: Colors.Orange,
-        iconColor: Colors.Orange
+        iconColor: Colors.Orange,
       });
       setModalAlertVisible(true);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
       <MainContainer>
         {/* <View style={styles.Logo}>
           <Logo width={100} height={100} />
         </View> */}
 
         <View style={styles.Logo}>
-          <Image 
-            source={Logo} 
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
+          <Image source={Logo} style={styles.logoImage} resizeMode="contain" />
         </View>
 
         <Text style={styles.Heading}>Welcome Back</Text>
@@ -105,21 +115,30 @@ const LoginScreen = ({ navigation }) => {
           validateOnMount={false}
           validateOnChange={true}
           validateOnBlur={true}
-          initialValues={{ login: '', password: '' }}
+          initialValues={{ login: "", password: "" }}
           onSubmit={async (values, { setSubmitting }) => {
-            console.log("Form values", values);
-            await handleSignIn(values);
-            setSubmitting(false);
+            try {
+              await handleSignIn(values);
+            } finally {
+              setSubmitting(false);
+            }
           }}
         >
-          {({ values, isValid, errors, handleChange, handleSubmit, isSubmitting }) => (
+          {({
+            values,
+            isValid,
+            errors,
+            handleChange,
+            handleSubmit,
+            isSubmitting,
+          }) => (
             <>
               <CustomTextInput
                 label="Phone Number"
                 type="number"
                 value={values.login}
                 isInvalid={!!errors.login}
-                onChangeText={handleChange('login')}
+                onChangeText={handleChange("login")}
                 error={errors.login}
               />
               <CustomTextInput
@@ -127,19 +146,19 @@ const LoginScreen = ({ navigation }) => {
                 type="password"
                 value={values.password}
                 isInvalid={!!errors.password}
-                onChangeText={handleChange('password')}
+                onChangeText={handleChange("password")}
                 error={errors.password}
               />
 
               <View style={styles.bottomContainer}>
                 <CustomButton
-                  title={isLoading ? 'Processing...' : 'Sign In'}
+                  title={isLoading ? "Processing..." : "Sign In"}
                   backgroundColor={Colors.Orange}
                   borderColor={Colors.Orange}
                   color={Colors.White}
                   onPress={handleSubmit}
                   isLoading={isLoading}
-                // isDisabled={!isValid}
+                  // isDisabled={!isValid}
                 />
                 <HorizontalDashComponent text="Or" />
                 <CustomButton
@@ -181,17 +200,17 @@ const styles = StyleSheet.create({
   //   alignSelf: "center",
   //   marginVertical: 20,
   // },
-   Logo: {
+  Logo: {
     alignSelf: "center",
     marginVertical: 20,
   },
   logoImage: {
-    width: 120,          
-    height: 120,          
+    width: 120,
+    height: 120,
   },
   Heading: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     fontFamily: "Poppins",
     color: Colors.Black_00,
   },
@@ -214,10 +233,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-
-
-
-
-
-
-
