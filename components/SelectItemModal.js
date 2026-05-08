@@ -1,16 +1,24 @@
-
-
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions, Modal, ActivityIndicator, Pressable } from 'react-native';
-import { useFetchCategoriesQuery } from '../redux/features/product/productApi';
-import { Colors } from '../utilities/colors';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Modal,
+  ActivityIndicator,
+  Pressable,
+} from "react-native";
+import { useFetchCategoriesQuery } from "../redux/features/product/productApi";
+import { Colors } from "../utilities/colors";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Thumb from "../assets/svg/thumbnail.svg";
-import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedCurrency } from '../redux/features/currencySlice';
-import {Picker} from '@react-native-picker/picker';
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedCurrency } from "../redux/features/currencySlice";
+import { Picker } from "@react-native-picker/picker";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const SelectItemModal = ({ visible, onClose, onSelectItem }) => {
   const { data, error, isLoading } = useFetchCategoriesQuery();
@@ -19,17 +27,22 @@ const SelectItemModal = ({ visible, onClose, onSelectItem }) => {
 
   const dispatch = useDispatch();
   const rates = useSelector((state) => state.currency.rates);
-  const selectedCurrency = useSelector((state) => state.currency.selectedCurrency);
-
-  // console.log("CurrencySelector - rates from Redux:", rates);
+  const selectedCurrency = useSelector(
+    (state) => state.currency.selectedCurrency,
+  );
 
   const handleCurrencyChange = (currency) => {
-      dispatch(setSelectedCurrency(currency));
+    dispatch(setSelectedCurrency(currency));
   };
 
   if (isLoading) {
     return (
-      <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+      <Modal
+        visible={visible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={onClose}
+      >
         <Pressable style={styles.overlay} onPress={onClose}>
           <View style={styles.container}>
             <ActivityIndicator size="large" color={Colors.Orange} />
@@ -41,7 +54,12 @@ const SelectItemModal = ({ visible, onClose, onSelectItem }) => {
 
   if (error) {
     return (
-      <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+      <Modal
+        visible={visible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={onClose}
+      >
         <Pressable style={styles.overlay} onPress={onClose}>
           <View style={styles.container}>
             <Text style={styles.title}>Failed to load categories</Text>
@@ -55,56 +73,85 @@ const SelectItemModal = ({ visible, onClose, onSelectItem }) => {
     setExpandedItems((prevExpandedItems) =>
       prevExpandedItems.includes(itemId)
         ? prevExpandedItems.filter((id) => id !== itemId)
-        : [...prevExpandedItems, itemId]
+        : [...prevExpandedItems, itemId],
     );
   };
 
   const handleFinalItemPress = (itemId) => {
     onSelectItem(itemId);
-    // console.log("item",itemId)
     onClose();
   };
 
-
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <TouchableOpacity onPress={() => handlePressItem(item.id)}>
-        <View style={styles.itemRow}>
-          <Ionicons name={expandedItems.includes(item.id) ? "chevron-up-sharp" : "chevron-down-sharp"} size={20} color={Colors.Orange} />
-          <Text style={styles.itemText}>{item.name}</Text>
-        </View>
-      </TouchableOpacity>
-      {expandedItems.includes(item.id) && item.children.length > 0 && (
-        <FlatList
-          data={item.children}
-          keyExtractor={(child) => child.id.toString()}
-          renderItem={item.children[0]?.children?.length > 0 ? renderItem : renderFinalItem}
-          style={styles.childList}
-        />
-      )}
-    </View>
-  );
+  const renderItem = ({ item }) => {
+    const hasChildren = Array.isArray(item?.children) && item.children > 0;
+    return (
+      <View style={styles.itemContainer}>
+        <TouchableOpacity onPress={() => handlePressItem(item.id)}>
+          <View style={styles.itemRow}>
+            <Ionicons
+              name={
+                expandedItems.includes(item.id)
+                  ? "chevron-up-sharp"
+                  : "chevron-down-sharp"
+              }
+              size={20}
+              color={Colors.Orange}
+            />
+            <Text style={styles.itemText}>{item.name}</Text>
+          </View>
+        </TouchableOpacity>
+        {expandedItems.includes(item.id) && item.children.length > 0 && (
+          <FlatList
+            data={item.children}
+            keyExtractor={(child) => child.id.toString()}
+            renderItem={
+              item.children[0]?.children?.length > 0
+                ? renderItem
+                : renderFinalItem
+            }
+            style={styles.childList}
+          />
+        )}
+      </View>
+    );
+  };
 
   const renderFinalItem = ({ item }) => (
-    <TouchableOpacity style={styles.childContainer} onPress={() => handleFinalItemPress((item.id))}>
+    <TouchableOpacity
+      style={styles.childContainer}
+      onPress={() => handleFinalItemPress(item.id)}
+    >
       <View style={styles.childRow}>
-        <Ionicons name="ellipse" size={10} color={Colors.Orange} style={styles.dotIcon} />
+        <Ionicons
+          name="ellipse"
+          size={10}
+          color={Colors.Orange}
+          style={styles.dotIcon}
+        />
         <Text style={styles.childText}>{item.name}</Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={onClose}
+    >
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.container}>
           <View style={styles.header}>
             <Thumb style={styles.thumb} />
-            <TouchableOpacity onPress={onClose} style={styles.closeButtonContainer}>
+            <TouchableOpacity
+              onPress={onClose}
+              style={styles.closeButtonContainer}
+            >
               <Ionicons name="close" size={40} color={Colors.Orange} />
             </TouchableOpacity>
           </View>
-          <View style={{ marginTop: 30,padding: 5 }}>
+          <View style={{ marginTop: 30, padding: 5 }}>
             <FlatList
               data={data || []}
               keyExtractor={(item) => item.id.toString()}
@@ -123,7 +170,7 @@ export default SelectItemModal;
 const styles = StyleSheet.create({
   container: {
     width: width * 0.7,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 0,
     padding: 20,
     flex: 1,
@@ -132,14 +179,14 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     // alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
-    fontFamily: "Poppins"
+    textAlign: "center",
+    fontFamily: "Poppins",
   },
   itemContainer: {
     marginBottom: 10,
@@ -148,11 +195,11 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 18,
     color: Colors.Black,
-    fontFamily: "Poppins"
+    fontFamily: "Poppins",
   },
   itemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   childContainer: {
     paddingLeft: 20,
@@ -161,11 +208,11 @@ const styles = StyleSheet.create({
   childText: {
     fontSize: 16,
     color: Colors.Gray,
-    fontFamily: "Poppins"
+    fontFamily: "Poppins",
   },
   childRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   dotIcon: {
     marginRight: 10,
@@ -188,9 +235,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
-},
-picker: {
+  },
+  picker: {
     height: 50,
     width: 150,
-},
+  },
 });
