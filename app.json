@@ -14,9 +14,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.techstackcompany.legithair",
-      "buildNumber": "4",
+      "buildNumber": "7",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationQueriesSchemes": [
+          "whatsapp"
+        ]
       }
     },
     "android": {
@@ -34,9 +37,6 @@
       "eas": {
         "projectId": "9dbe32c8-6739-4268-ba90-e161791219be"
       }
-    },
-    "cli": {
-      "appVersionSource": "local"
     },
     "runtimeVersion": "1.0.0",
     "updates": {
