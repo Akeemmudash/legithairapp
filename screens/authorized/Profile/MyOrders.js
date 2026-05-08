@@ -24,7 +24,6 @@ const MyOrders = ({ navigation }) => {
   }, [navigation, refetch]);
 
   const orderDetails = orderData?.data;
-  console.log("Order Details", orderDetails);
 
   const texts = [
     "My Orders",

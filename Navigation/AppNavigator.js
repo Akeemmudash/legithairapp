@@ -31,7 +31,6 @@ const {Navigator} = createNativeStackNavigator();
 
 const AppNavigator = () => {
     const token = useSelector(state => state.userAuth.token);
-    console.log(token)
 
     return (
       <Navigator>

@@ -165,7 +165,6 @@ const OrderTracker = ({ route }) => {
     setSelectedProduct(null);
   };
 
-  console.log("selectedImage", selectedImage)
 
 
   return (

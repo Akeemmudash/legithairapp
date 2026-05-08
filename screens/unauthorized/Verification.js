@@ -29,8 +29,6 @@ const Verification = ({ navigation }) => {
                     numberOfDigits={4}
                     focusColor={Colors.Orange}
                     focusStickBlinkingDuration={500}
-                    onTextChange={(text) => console.log(text)}
-                    onFilled={(text) => console.log(`OTP is ${text}`)}
                     textInputProps={{
                         accessibilityLabel: "One-Time Password",
                     }}

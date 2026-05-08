@@ -20,7 +20,6 @@ const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }) => {
   const { full_name, phone, id } = useSelector(state => state.userAuth);
-  console.log(full_name, phone, id)
   const { data, error, isLoading } = useFetchProductsQuery(0);
   const [saveProduct, { isLoading: isSaving }] = useSaveProductMutation();
   const [rateProduct, { isLoading: isRating }] = useRateProductMutation();
@@ -37,7 +36,6 @@ const HomeScreen = ({ navigation }) => {
   const handleSaveProduct = async (productId) => {
     try {
       const response = await saveProduct({ productId }).unwrap();
-      console.log("Save Product Response:", response); // Log the response
       Alert.alert("Product Saved", "The product has been saved successfully.");
       setModalContent({
         icon: 'checkmark-circle-outline',

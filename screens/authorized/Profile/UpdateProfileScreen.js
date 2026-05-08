@@ -43,9 +43,7 @@ const UpdateProfileScreen = ({ navigation }) => {
 
     const handleUpdateProfile = async () => {
         try {
-            console.log("pressing")
             const result = await updateProfile({ name, phone_number, email: Email }).unwrap();
-            console.log(result)
             setModalContent({
                 icon: 'checkmark-circle-outline',
                 message: 'Profile updated successfully.',
@@ -60,7 +58,6 @@ const UpdateProfileScreen = ({ navigation }) => {
                     full_name: name,
                 };
 
-                console.log("User object:", user);
 
                 dispatch(updateUser(user));
             } else {

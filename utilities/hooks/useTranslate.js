@@ -16,7 +16,6 @@ export const useTranslate = (texts) => {
         q: texts,
         target: language,
       });
-      console.log("response", response)
       const translatedTexts = response.data.data.translations;
       const translationsMap = {};
       translatedTexts.forEach((translation, index) => {

@@ -40,12 +40,9 @@ const SignupScreen = ({ navigation }) => {
       phone_number: values.phone,
       password: values.password,
     };
-    console.log('response', user);
 
     try {
-      console.log('Signup request payload:', user); // Log the request payload
       const response = await signupUser(user).unwrap();
-      console.log('response', response);
       if (response?.message === 'User Created') {
         setModalContent({
           icon: 'checkmark-circle-outline',
@@ -95,7 +92,6 @@ const SignupScreen = ({ navigation }) => {
           validateOnBlur={true}
           onSubmit={handleSignUp}
         // onSubmit={async (values, { setSubmitting }) => {
-        //   console.log("Form values", values);
         //   await handleSignUp(values);
         //   setSubmitting(false);
         // }}

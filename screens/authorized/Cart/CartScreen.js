@@ -33,7 +33,6 @@ const CartScreen = ({ route, navigation }) => {
   };
 
 
-    console.log("cartItems", cartItems);
 
 
     const handleRemoveItem = (id, selectedSize) => {

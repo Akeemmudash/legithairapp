@@ -17,7 +17,6 @@
 // }, [dashboardData]);
 
 // const Saved = dashboardData?.saved_product
-// console.log("Saved", Saved);
 
 // const ImageSlider = () => {
 //   return (

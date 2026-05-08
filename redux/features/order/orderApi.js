@@ -11,7 +11,6 @@ export const orderApi = createApi({
         prepareHeaders: (headers, { getState }) => {
             const token = getState().userAuth.token;
             if (token) {
-                console.log("Token:", token); // Add this line for debugging
                 headers.set('Authorization', `Bearer ${token}`); // Ensure Bearer token format
             }
             return headers;

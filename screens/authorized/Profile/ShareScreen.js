@@ -22,7 +22,6 @@ const ShareScreen = ({ route }) => {
 
   useEffect(() => {
     if (dashboardData) {
-      console.log("Saved products:", dashboardData?.website_link);
     }
   }, [dashboardData]);
 
@@ -55,15 +54,11 @@ const ShareScreen = ({ route }) => {
       })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
-          console.log('share with activity type of: ', result.activityType)
         } else {
-          console.log("shared")
         }
       } else if (result.action === Share.dismissedAction) {
-        console.log("dismissed")
       }
     } catch {
-      console.log(error.message)
     }
   }
 

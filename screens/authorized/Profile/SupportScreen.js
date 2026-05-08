@@ -18,14 +18,12 @@ const SupportScreen = ({  }) => {
 
     useEffect(() => {
         if (dashboardData) {
-            // console.log("Saved products:", dashboardData);
         }
     }, [dashboardData]);
   
     const admin_number = dashboardData?.customer_care;
     const admin_email = dashboardData?.customercare_email;
 
-    console.log(admin_email, admin_number);
 
 
     const handlePhoneNumberClick = (phoneNumber) => {

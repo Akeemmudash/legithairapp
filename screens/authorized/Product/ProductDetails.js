@@ -37,7 +37,6 @@ const ProductDetails = ({ route, navigation }) => {
         setSelectedInch(inch);
     };
 
-    console.log("selected", selectedInch)
 
     const handleAddToCart = () => {
         // if (!selectedInch) return;
@@ -57,7 +56,6 @@ const ProductDetails = ({ route, navigation }) => {
             selectedInch: selectedInch || null, 
         };
     
-        console.log("cartItem", cartItem)
         dispatch(addItem(cartItem));
         setModalContent({
             icon: 'checkmark-circle-outline',
