@@ -20,7 +20,17 @@ import { Picker } from "@react-native-picker/picker";
 
 const { width } = Dimensions.get("window");
 
-const SelectItemModal = ({ visible, onClose, onSelectItem }) => {
+const isStringEqual = (str1, str2) => {
+  return str1.toLowerCase() === str2.toLowerCase();
+};
+
+const SelectItemModal = ({
+  visible,
+  onClose,
+  onSelectItem,
+  onSelectItemText,
+  selectedText,
+}) => {
   const { data, error, isLoading } = useFetchCategoriesQuery();
   const [expandedItems, setExpandedItems] = useState([]);
 
@@ -82,21 +92,46 @@ const SelectItemModal = ({ visible, onClose, onSelectItem }) => {
     onClose();
   };
 
+  const handleSelectText = (text) => {
+    if (typeof text === "string") {
+      onSelectItemText(text.toLowerCase());
+      onClose();
+    }
+  };
+
   const renderItem = ({ item }) => {
     const hasChildren = Array.isArray(item?.children) && item.children > 0;
     return (
       <View style={styles.itemContainer}>
-        <TouchableOpacity onPress={() => handlePressItem(item.id)}>
+        <TouchableOpacity
+          onPress={() =>
+            hasChildren
+              ? handlePressItem(item.id)
+              : handleSelectText(item?.name)
+          }
+        >
           <View style={styles.itemRow}>
-            <Ionicons
-              name={
-                expandedItems.includes(item.id)
-                  ? "chevron-up-sharp"
-                  : "chevron-down-sharp"
-              }
-              size={20}
-              color={Colors.Orange}
-            />
+            {hasChildren ? (
+              <Ionicons
+                name={
+                  expandedItems.includes(item.id)
+                    ? "chevron-up-sharp"
+                    : "chevron-down-sharp"
+                }
+                size={20}
+                color={Colors.Orange}
+              />
+            ) : (
+              <Ionicons
+                name={
+                  isStringEqual(item.name, selectedText)
+                    ? "radio-button-on-outline"
+                    : "radio-button-off-outline"
+                }
+                size={20}
+                color={Colors.Orange}
+              />
+            )}
             <Text style={styles.itemText}>{item.name}</Text>
           </View>
         </TouchableOpacity>
