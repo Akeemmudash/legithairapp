@@ -1,29 +1,23 @@
 
-
-import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { persistor, store } from './redux/store';
-import MainTabNavigator from './Navigation/MainTabNavigator';
-import AuthNavigation from './Navigation/AuthNavigation';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useCachedResources from './utilities/useCachedResources';
 import { updateUser } from './redux/features/auth/authSlice';
 import { PersistGate } from 'redux-persist/integration/react';
-import useFetchConversionRates from './utilities/hooks/useFetchConversionRates';
+import RootNavigation, { navigationRef } from './Navigation/RootNavigation';
+import linking from './Navigation/linking';
+import { startAuthListener } from './utilities/authListener';
 
 SplashScreen.preventAutoHideAsync();
 
 const AppContent = () => {
   const dispatch = useDispatch();
-  const [initialRoute, setInitialRoute] = useState(null);
-
-  const { token } = useSelector((state) => state.userAuth);
   const isLoadingComplete = useCachedResources();
-  useFetchConversionRates();
 
   useEffect(() => {
     const checkToken = async () => {
@@ -31,20 +25,19 @@ const AppContent = () => {
         const tokenFromStorage = await AsyncStorage.getItem('token');
         if (tokenFromStorage) {
           dispatch(updateUser({ token: tokenFromStorage }));
-          // setInitialRoute('Main');
-        } else {
-          // setInitialRoute('Auth');
         }
       } catch (error) {
         console.error("Error fetching token from AsyncStorage", error);
-        setInitialRoute('Auth');
-      } finally {
-        // setIsLoading(false);
       }
     };
 
     checkToken();
   }, [dispatch]);
+
+  useEffect(() => {
+    const unsubscribe = startAuthListener();
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     if (isLoadingComplete) {
@@ -61,8 +54,8 @@ const AppContent = () => {
   }
 
   return (
-    <NavigationContainer>
-      {token ? <MainTabNavigator /> : <AuthNavigation />}
+    <NavigationContainer ref={navigationRef} linking={linking}>
+      <RootNavigation />
     </NavigationContainer>
   );
 };
@@ -85,4 +78,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-

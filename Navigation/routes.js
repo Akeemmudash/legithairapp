@@ -1,4 +1,5 @@
 const ROUTES = {
+    AUTH_STACK: 'AuthStack',
     WELCOMING: 'WelcomeScreen',
     MAIN: 'MainTabNavigator',
     SIGN_UP_SCREEN: "SignupScreen",

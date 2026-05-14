@@ -8,7 +8,6 @@ import LoginScreen from '../screens/unauthorized/LoginScreen'
 import ResetPassword from '../screens/unauthorized/ResetPassword'
 import Verification from '../screens/unauthorized/Verification'
 import ForgotPasswordScreen from '../screens/unauthorized/ForgotPasswordScreen'
-import MainTabNavigator from './MainTabNavigator'
 
 const Stack = createNativeStackNavigator()
 
@@ -21,7 +20,6 @@ const AuthNavigation = () => {
             <Stack.Screen name={ROUTES.RESET_PASSWORD} component={ResetPassword} />
             <Stack.Screen name={ROUTES.VERIFICATION} component={Verification} />
             <Stack.Screen name={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
-            <Stack.Screen name={ROUTES.MAIN} component={MainTabNavigator} />
         </Stack.Navigator>
     )
 }
