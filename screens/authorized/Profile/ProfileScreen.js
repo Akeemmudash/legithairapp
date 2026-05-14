@@ -23,9 +23,13 @@ import { clearSavedProducts } from "../../../redux/features/product/productSlice
 import { FlatList } from "react-native-gesture-handler";
 import { toggleLanguage } from "../../../redux/features/languageSlice";
 import { useTranslate } from "../../../utilities/hooks/useTranslate";
+import AuthGate from "../../../components/AuthGate";
 
 const ProfileScreen = ({ navigation }) => {
-  const { full_name, phone, email } = useSelector((state) => state.userAuth);
+  const { full_name, phone, email, token } = useSelector(
+    (state) => state.userAuth,
+  );
+  const isAuthenticated = !!token;
   const language = useSelector((state) => state.language.language);
   const [deleteAccount, { isLoading }] = useDeleteAccountMutation();
   const dispatch = useDispatch();
@@ -54,7 +58,7 @@ const ProfileScreen = ({ navigation }) => {
       setModalAlertVisible(true);
 
       dispatch(clearUser());
-      navigation.navigate(ROUTES.WELCOMING);
+      navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.WELCOMING });
     } catch (error) {
       setModalContent({
         icon: "close-circle-outline",
@@ -72,10 +76,13 @@ const ProfileScreen = ({ navigation }) => {
       await AsyncStorage.clear();
       dispatch(clearUser());
       dispatch(clearCart());
-      navigation.navigate(ROUTES.SIGN_UP_SCREEN);
+      navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.SIGN_UP_SCREEN });
     } catch (error) {
       console.error("Error during logout:", error);
     }
+  };
+  const login = async () => {
+    navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.LOGIN_SCREEN });
   };
 
   const texts = [
@@ -86,6 +93,7 @@ const ProfileScreen = ({ navigation }) => {
     "Invites Friends",
     "Language",
     "Logout",
+    "Login",
     "Delete Account",
     "Your account has been successfully deleted!",
     "Failed to delete account.",
@@ -99,12 +107,14 @@ const ProfileScreen = ({ navigation }) => {
       title: translate("My Orders") || "My Orders",
       svg: <Cart />,
       link: ROUTES.MY_ORDERS,
+      showOnAuth: true,
     },
     {
       id: 3,
       title: translate("Security") || "Security",
       svg: <Lock />,
       link: ROUTES.SECURITY_SCREEN,
+      showOnAuth: true,
     },
     {
       id: 4,
@@ -117,6 +127,7 @@ const ProfileScreen = ({ navigation }) => {
       title: translate("Invites Friends") || "Invites Friends",
       svg: <Users />,
       link: ROUTES.SHARE_SCREEN,
+      showOnAuth: false,
     },
     {
       id: 6,
@@ -126,75 +137,89 @@ const ProfileScreen = ({ navigation }) => {
       switchValue: language === "fr",
       onSwitchChange: () => dispatch(toggleLanguage()),
     },
-    {
-      id: 7,
-      title: translate("Logout") || "Logout",
-      svg: <Logout />,
-      onPressed: logout,
-    },
+    isAuthenticated
+      ? {
+          id: 7,
+          title: translate("Logout") || "Logout",
+          svg: <Logout />,
+          onPressed: logout,
+          showOnAuth: true,
+        }
+      : {
+          id: 7,
+          title: translate("Login") || "Login",
+          svg: <Logout />,
+          onPressed: login,
+        },
+
     {
       id: 8,
       title: translate("Delete Account") || "Delete Account",
       svg: <Logout />,
       onPressed: () => setModalVisible(true),
+      showOnAuth: true,
     },
   ];
 
   return (
     <MainContainer>
       <Back title={translate("Profile")} />
-      <View style={[styles.container, styles.shadow]}>
-        <View style={styles.row}>
-          <Ionicons
-            name="person-outline"
-            size={50}
-            color={Colors.Orange}
-            style={{ marginRight: 1 }}
-          />
-          <TouchableOpacity
-            onPress={() => navigation.navigate(ROUTES.UNPADTE_PROFILE_SCREEN)}
-          >
-            <View>
-              <Text
-                style={{
-                  color: Colors.Black_00,
-                  fontWeight: "600",
-                  fontSize: 14,
-                  fontFamily: "Poppins",
-                }}
-              >
-                {full_name}
-              </Text>
-              <Text
-                style={{
-                  color: Colors.Black_00,
-                  fontWeight: "400",
-                  fontSize: 14,
-                  fontFamily: "Poppins",
-                }}
-              >
-                {email}
-              </Text>
-              <Text
-                style={{
-                  color: Colors.Black_00,
-                  fontWeight: "400",
-                  fontSize: 14,
-                  fontFamily: "Poppins",
-                }}
-              >
-                {phone}
-              </Text>
-            </View>
-          </TouchableOpacity>
+      {isAuthenticated && (
+        <View style={[styles.container, styles.shadow]}>
+          <View style={styles.row}>
+            <Ionicons
+              name="person-outline"
+              size={50}
+              color={Colors.Orange}
+              style={{ marginRight: 1 }}
+            />
+            <TouchableOpacity
+              onPress={() => navigation.navigate(ROUTES.UNPADTE_PROFILE_SCREEN)}
+            >
+              <View>
+                <Text
+                  style={{
+                    color: Colors.Black_00,
+                    fontWeight: "600",
+                    fontSize: 14,
+                    fontFamily: "Poppins",
+                  }}
+                >
+                  {full_name}
+                </Text>
+                <Text
+                  style={{
+                    color: Colors.Black_00,
+                    fontWeight: "400",
+                    fontSize: 14,
+                    fontFamily: "Poppins",
+                  }}
+                >
+                  {email}
+                </Text>
+                <Text
+                  style={{
+                    color: Colors.Black_00,
+                    fontWeight: "400",
+                    fontSize: 14,
+                    fontFamily: "Poppins",
+                  }}
+                >
+                  {phone}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
       <FlatList
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         data={SettingsList}
         renderItem={({ item }) => {
+          if (item.showOnAuth && !isAuthenticated) return null;
+
           return (
             <View>
               {item.hasSwitch ? (
@@ -309,7 +334,13 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-export default ProfileScreen;
+const GatedProfileScreen = (props) => (
+  // <AuthGate feature="profile">
+  <ProfileScreen {...props} />
+  // </AuthGate>
+);
+
+export default GatedProfileScreen;
 
 const styles = StyleSheet.create({
   CardContainer: {

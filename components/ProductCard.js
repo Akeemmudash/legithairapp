@@ -1,61 +1,75 @@
+import React, { useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useSelector, useDispatch } from "react-redux";
+import { Colors } from "../utilities/colors";
+import Rating from "./Rating";
+import {
+  addProduct,
+  removeProduct,
+  saveProductToStorage,
+} from "../redux/features/product/productSlice";
+import { useTranslate } from "../utilities/hooks/useTranslate";
+import formatNaira from "../utilities/formatNaira";
 
+const { width } = Dimensions.get("window");
 
-import React, { useCallback } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useSelector, useDispatch } from 'react-redux';
-import { Colors } from '../utilities/colors';
-import Rating from './Rating';
-import { addProduct, removeProduct, saveProductToStorage } from '../redux/features/product/productSlice';
-import { useTranslate } from '../utilities/hooks/useTranslate';
-import formatNaira from '../utilities/formatNaira';
-
-const { width } = Dimensions.get('window');
-
-const ProductCard = ({ item, handleSaveProduct, navigation, showSaveModal }) => {
+const ProductCard = ({
+  item,
+  handleSaveProduct,
+  navigation,
+  showSaveModal,
+}) => {
   const dispatch = useDispatch();
-  const savedProducts = useSelector(state => state.savedProducts);
+  const savedProducts = useSelector((state) => state.savedProducts);
 
-  const handleSavePress = useCallback(async (product) => {
-    const isProductSaved = savedProducts.some(p => p.id === product.id);
+  const handleSavePress = useCallback(
+    async (product) => {
+      const isProductSaved = savedProducts.some((p) => p.id === product.id);
 
-    const updatedSavedProducts = isProductSaved
-      ? savedProducts.filter(p => p.id !== product.id)
-      : [...savedProducts, product];
+      const updatedSavedProducts = isProductSaved
+        ? savedProducts.filter((p) => p.id !== product.id)
+        : [...savedProducts, product];
 
-    try {
-      dispatch(saveProductToStorage(updatedSavedProducts));
-      if (showSaveModal) {
-        showSaveModal(product.id, !isProductSaved);
-      }
-      if (isProductSaved) {
-        dispatch(removeProduct(product));
-      } else {
-        dispatch(addProduct(product));
-      }
-      await handleSaveProduct(product.id);
-    } catch (error) {
-
-    }
-  }, [savedProducts, handleSaveProduct, dispatch, showSaveModal]);
+      try {
+        dispatch(saveProductToStorage(updatedSavedProducts));
+        if (showSaveModal) {
+          showSaveModal(product.id, !isProductSaved);
+        }
+        if (isProductSaved) {
+          dispatch(removeProduct(product));
+        } else {
+          dispatch(addProduct(product));
+        }
+        await handleSaveProduct(product.id);
+      } catch (error) {}
+    },
+    [savedProducts, handleSaveProduct, dispatch, showSaveModal],
+  );
 
   const shortened_name = item?.product_name
-    ? item.product_name.split(' ').slice(0, 6).join(' ')
-    : 'Unknown Product';
+    ? item.product_name.split(" ").slice(0, 6).join(" ")
+    : "Unknown Product";
 
-  const isSaved = savedProducts.some(p => p.id === item.id);
+  const isSaved = savedProducts.some((p) => p.id === item.id);
 
-  const texts = [
-    "Add to Cart",
-    shortened_name
-  ];
+  const texts = ["Add to Cart", shortened_name];
 
   const translate = useTranslate(texts);
 
   return (
     <View style={{ flex: 1, margin: 5 }}>
-      <View style={styles.card} 
-      // onPress={() => navigation.navigate('ProductDetails', { product: item })}
+      <View
+        style={styles.card}
+        // onPress={() => navigation.navigate('ProductDetails', { product: item })}
       >
         <ScrollView
           horizontal
@@ -73,33 +87,63 @@ const ProductCard = ({ item, handleSaveProduct, navigation, showSaveModal }) => 
           ))}
         </ScrollView>
         <View style={{ paddingHorizontal: 10 }}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignContent: "center", alignItems: "center", marginTop: 5 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignContent: "center",
+              alignItems: "center",
+              marginTop: 5,
+            }}
+          >
             <View style={styles.ratingContainer}>
               <Rating rating={item.total_rating} />
             </View>
-            <TouchableOpacity onPress={() => handleSavePress(item)} style={{ marginRight: 2 }} activeOpacity={0.6}>
+            <TouchableOpacity
+              onPress={() => handleSavePress(item)}
+              style={{ marginRight: 2 }}
+              activeOpacity={0.6}
+            >
               <Ionicons
-                name={isSaved ? 'heart' : 'heart-outline'}
+                name={isSaved ? "heart" : "heart-outline"}
                 size={18}
                 color={isSaved ? Colors.Orange : Colors.Gray}
               />
             </TouchableOpacity>
           </View>
-          <Text style={styles.name}>
-            {translate(shortened_name)}
-            </Text>
-          <View style={{ flexDirection: "row", alignContent: "center", alignItems: "center", paddingVertical: 4 }}>
+          <Text style={styles.name}>{translate(shortened_name)}</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+              paddingVertical: 4,
+            }}
+          >
             {item.discount > 0 ? (
               <>
                 <Text style={styles.price}>{formatNaira(item.discount)}</Text>
-                <Text style={styles.discountPrice}>{formatNaira(item.price)}</Text>
+                <Text style={styles.discountPrice}>
+                  {formatNaira(item.price)}
+                </Text>
               </>
             ) : (
               <Text style={styles.price}>{formatNaira(item.price)}</Text>
             )}
           </View>
-          <TouchableOpacity style={styles.button} activeOpacity={0.6} onPress={() => navigation.navigate('ProductDetails', { product: item })}>
-            <Ionicons name="cart-outline" size={15} color={Colors.White} style={{ marginRight: 1 }} />
+          <TouchableOpacity
+            style={styles.button}
+            activeOpacity={0.6}
+            onPress={() =>
+              navigation.navigate("ProductDetails", { product: item })
+            }
+          >
+            <Ionicons
+              name="cart-outline"
+              size={15}
+              color={Colors.White}
+              style={{ marginRight: 1 }}
+            />
             <Text style={styles.buttonText}>{translate("Add to Cart")}</Text>
           </TouchableOpacity>
         </View>
@@ -113,9 +157,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.White,
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -133,7 +177,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 12,
     color: Colors.Gray_01,
-    fontWeight: '600',
+    fontWeight: "600",
     fontFamily: "Poppins",
   },
   discountPrice: {
@@ -141,8 +185,7 @@ const styles = StyleSheet.create({
     color: Colors.Gray_01,
     fontWeight: "600",
     fontFamily: "Poppins",
-    textDecorationLine: 'line-through',
-    
+    textDecorationLine: "line-through",
   },
   price: {
     fontSize: 12,
@@ -150,7 +193,7 @@ const styles = StyleSheet.create({
     left: 3,
     fontWeight: "400",
     fontFamily: "Poppins",
-    marginRight: 6
+    marginRight: 6,
   },
   button: {
     width: "100%",
@@ -162,15 +205,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
-    marginTop: 5
+    marginTop: 5,
   },
   buttonText: {
     fontSize: 8.12,
     fontWeight: "600",
     color: Colors.White,
-    fontFamily: "Poppins"
-  }
+    fontFamily: "Poppins",
+  },
 });
 
 export default ProductCard;
-
