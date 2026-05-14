@@ -11,29 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearCart, removeItem, incrementQuantity, decrementQuantity } from '../../../redux/features/cart/cartSlice';
 import { FlatList } from 'react-native-gesture-handler';
 import { useTranslate } from '../../../utilities/hooks/useTranslate';
+import formatNaira from '../../../utilities/formatNaira';
 
 const CartScreen = ({ route, navigation }) => {
     const [discountText, setDiscountText] = useState("");
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart);
-
-    const selectedCurrency = useSelector(state => state.currency.selectedCurrency);
-  const conversionRates = useSelector(state => state.currency.rates);
-
-  const convertPrice = (priceInNGN) => {
-    if (conversionRates[selectedCurrency]) {
-      return priceInNGN * conversionRates[selectedCurrency];
-    }
-    return priceInNGN; // Fallback to NGN if conversion rate not available
-  };
-
-  const formatPrice = (price) => {
-    const convertedPrice = convertPrice(price);
-    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: selectedCurrency }).format(convertedPrice);
-  };
-
-
-
 
     const handleRemoveItem = (id, selectedSize) => {
         dispatch(removeItem({ id, selectedSize }));
@@ -101,14 +84,14 @@ const CartScreen = ({ route, navigation }) => {
                                 {item.selectedInch ? (
                                     item.selectedInch.discount > 0 ? (
                                         <>
-                                            <Text style={styles.price}>{formatPrice(item.selectedInch.discount)}</Text>
-                                            <Text style={styles.discountPrice}>{formatPrice(item.selectedInch.price)}</Text>
+                                            <Text style={styles.price}>{formatNaira(item.selectedInch.discount)}</Text>
+                                            <Text style={styles.discountPrice}>{formatNaira(item.selectedInch.price)}</Text>
                                         </>
                                     ) : (
-                                        <Text style={styles.price}>{formatPrice(item.selectedInch.price)}</Text>
+                                        <Text style={styles.price}>{formatNaira(item.selectedInch.price)}</Text>
                                     )
                                 ) : (
-                                    <Text style={styles.price}>{formatPrice(item.price)}</Text>
+                                    <Text style={styles.price}>{formatNaira(item.price)}</Text>
                                 )}
                             </View>
 
@@ -153,11 +136,11 @@ const CartScreen = ({ route, navigation }) => {
                                 <Text style={{ fontWeight: "600", fontSize: 14, color: Colors.Black_00, paddingVertical: 5, fontFamily: "Poppins" }}>{translate("Summary")}</Text>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
                                     <Text style={{ fontWeight: "500", fontSize: 12, color: Colors.Black_00, paddingVertical: 5, fontFamily: "Poppins" }}>{translate("SubTotal")}</Text>
-                                    <Text style={{ fontWeight: "600", fontSize: 20, color: Colors.Black_00, paddingVertical: 5, fontFamily: "Poppins" }}>{formatPrice(totalPrice)}</Text>
+                                    <Text style={{ fontWeight: "600", fontSize: 20, color: Colors.Black_00, paddingVertical: 5, fontFamily: "Poppins" }}>{formatNaira(totalPrice)}</Text>
                                 </View>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", }}>
                                     <Text style={{ fontWeight: "500", fontSize: 12, color: Colors.Black_00, paddingVertical: 5, fontFamily: "Poppins" }}>{translate("Total")}</Text>
-                                    <Text style={{ fontWeight: "600", fontSize: 20, color: Colors.Black_00, paddingVertical: 5, fontFamily: "Poppins" }}>{formatPrice(totalPrice)}</Text>
+                                    <Text style={{ fontWeight: "600", fontSize: 20, color: Colors.Black_00, paddingVertical: 5, fontFamily: "Poppins" }}>{formatNaira(totalPrice)}</Text>
                                 </View>
                             </View>
                         </>
@@ -284,7 +267,6 @@ const styles = StyleSheet.create({
 });
 
 export default CartScreen;
-
 
 
 

@@ -11,10 +11,10 @@ import { addProduct, loadSavedProducts, removeProduct, saveProductToStorage } fr
 import ROUTES from '../../../Navigation/routes';
 import { FlatList } from 'react-native-gesture-handler';
 import { useTranslate } from '../../../utilities/hooks/useTranslate';
+import formatNaira from '../../../utilities/formatNaira';
 
 const WishListScreen = ({ navigation }) => {
     const dispatch = useDispatch();
-    const { id } = useSelector(state => state.userAuth);
     const savedProducts = useSelector(state => state.savedProducts);
     const [saveProduct] = useSaveProductMutation();
     const [refreshing, setRefreshing] = React.useState(false);
@@ -54,22 +54,6 @@ const WishListScreen = ({ navigation }) => {
     };
 
 
-    const selectedCurrency = useSelector(state => state.currency.selectedCurrency);
-    const conversionRates = useSelector(state => state.currency.rates);
-
-    const convertPrice = (priceInNGN) => {
-        if (conversionRates[selectedCurrency]) {
-            return priceInNGN * conversionRates[selectedCurrency];
-        }
-        return priceInNGN; // Fallback to NGN if conversion rate not available
-    };
-
-    const formatPrice = (price) => {
-        const convertedPrice = convertPrice(price);
-        return new Intl.NumberFormat('en-NG', { style: 'currency', currency: selectedCurrency }).format(convertedPrice);
-    };
-
-
     const itemNames = savedProducts.map(item => item.product_name);
 
     const texts = [
@@ -98,7 +82,7 @@ const WishListScreen = ({ navigation }) => {
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                             <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 <Text style={styles.productPriceLabel}>Price: </Text>
-                                <Text style={styles.productPrice}>{formatPrice(item.price)}</Text>
+                                <Text style={styles.productPrice}>{formatNaira(item.price)}</Text>
                             </View>
                             <View style={{ flexDirection: "row" }}>
                                 <TouchableOpacity

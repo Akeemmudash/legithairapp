@@ -14,8 +14,8 @@ import { Rating } from 'react-native-ratings';
 import CustomButton from '../../../components/CustomButton';
 import StatusModal from '../../../components/StatusModal';
 import { FlatList } from 'react-native-gesture-handler';
-import { useSelector } from 'react-redux';
 import { useTranslate } from '../../../utilities/hooks/useTranslate';
+import formatNaira from '../../../utilities/formatNaira';
 
 const customStyles = {
   stepIndicatorSize: 30,
@@ -51,23 +51,6 @@ const OrderTracker = ({ route }) => {
   const handleCloseModal = () => {
     setModalAlertVisible(false);
   };
-
-
-  const selectedCurrency = useSelector(state => state.currency.selectedCurrency);
-  const conversionRates = useSelector(state => state.currency.rates);
-
-  const convertPrice = (priceInNGN) => {
-    if (conversionRates[selectedCurrency]) {
-      return priceInNGN * conversionRates[selectedCurrency];
-    }
-    return priceInNGN;
-  };
-
-  const formatPrice = (price) => {
-    const convertedPrice = convertPrice(price);
-    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: selectedCurrency }).format(convertedPrice);
-  };
-
 
 
   const steps = [
@@ -129,7 +112,7 @@ const OrderTracker = ({ route }) => {
 
   const orderDetails = [
     { key: translate('Order ID'), value: item.order_id },
-    { key: translate('Amount Paid'), value: formatPrice(item.amount_paid) },
+    { key: translate('Amount Paid'), value: formatNaira(item.amount_paid) },
     { key: translate('Order Date'), value: item.date },
     { key: translate('Delivery Status'), value: item.delivery_status },
     { key: translate("'Payment Method'"), value: item.payment_method },
@@ -249,7 +232,7 @@ const OrderTracker = ({ route }) => {
                     </ScrollView>
                   </View>
                   <Text style={styles.productName}>{item.product_name}</Text>
-                  <Text style={styles.productDetail}>{translate("Amount")}: {formatPrice(item.product_amount)}</Text>
+                  <Text style={styles.productDetail}>{translate("Amount")}: {formatNaira(item.product_amount)}</Text>
                   {item?.inches && (
                     <Text style={styles.productDetail}>{translate("Inches")}: {item?.inches}</Text>
                   )}

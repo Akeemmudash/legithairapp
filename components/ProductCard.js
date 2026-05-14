@@ -8,15 +8,13 @@ import { Colors } from '../utilities/colors';
 import Rating from './Rating';
 import { addProduct, removeProduct, saveProductToStorage } from '../redux/features/product/productSlice';
 import { useTranslate } from '../utilities/hooks/useTranslate';
+import formatNaira from '../utilities/formatNaira';
 
 const { width } = Dimensions.get('window');
 
 const ProductCard = ({ item, handleSaveProduct, navigation, showSaveModal }) => {
   const dispatch = useDispatch();
   const savedProducts = useSelector(state => state.savedProducts);
-  const selectedCurrency = useSelector(state => state.currency.selectedCurrency);
-  const conversionRates = useSelector(state => state.currency.rates);
-
 
   const handleSavePress = useCallback(async (product) => {
     const isProductSaved = savedProducts.some(p => p.id === product.id);
@@ -26,7 +24,6 @@ const ProductCard = ({ item, handleSaveProduct, navigation, showSaveModal }) => 
       : [...savedProducts, product];
 
     try {
-      // Optimistically update UI
       dispatch(saveProductToStorage(updatedSavedProducts));
       if (showSaveModal) {
         showSaveModal(product.id, !isProductSaved);
@@ -41,22 +38,6 @@ const ProductCard = ({ item, handleSaveProduct, navigation, showSaveModal }) => 
 
     }
   }, [savedProducts, handleSaveProduct, dispatch, showSaveModal]);
-
-  // const formatPrice = (price) => {
-  //   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(price);
-  // };
-
-  const convertPrice = (priceInNGN) => {
-    if (conversionRates[selectedCurrency]) {
-      return priceInNGN * conversionRates[selectedCurrency];
-    }
-    return priceInNGN; // Fallback to NGN if conversion rate not available
-  };
-
-  const formatPrice = (price) => {
-    const convertedPrice = convertPrice(price);
-    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: selectedCurrency }).format(convertedPrice);
-  };
 
   const shortened_name = item?.product_name
     ? item.product_name.split(' ').slice(0, 6).join(' ')
@@ -110,11 +91,11 @@ const ProductCard = ({ item, handleSaveProduct, navigation, showSaveModal }) => 
           <View style={{ flexDirection: "row", alignContent: "center", alignItems: "center", paddingVertical: 4 }}>
             {item.discount > 0 ? (
               <>
-                <Text style={styles.price}>{formatPrice(item.discount)}</Text>
-                <Text style={styles.discountPrice}>{formatPrice(item.price)}</Text>
+                <Text style={styles.price}>{formatNaira(item.discount)}</Text>
+                <Text style={styles.discountPrice}>{formatNaira(item.price)}</Text>
               </>
             ) : (
-              <Text style={styles.price}>{formatPrice(item.price)}</Text>
+              <Text style={styles.price}>{formatNaira(item.price)}</Text>
             )}
           </View>
           <TouchableOpacity style={styles.button} activeOpacity={0.6} onPress={() => navigation.navigate('ProductDetails', { product: item })}>
@@ -192,5 +173,4 @@ const styles = StyleSheet.create({
 });
 
 export default ProductCard;
-
 

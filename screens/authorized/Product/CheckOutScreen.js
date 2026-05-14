@@ -34,6 +34,7 @@ import { FlatList } from "react-native-gesture-handler";
 import ROUTES from "../../../Navigation/routes";
 import { clearCart } from "../../../redux/features/cart/cartSlice";
 import { useTranslate } from "../../../utilities/hooks/useTranslate";
+import formatNaira from "../../../utilities/formatNaira";
 
 const COUNTRIES_API_URL = "https://countriesnow.space/api/v0.1/countries";
 const STATES_API_URL = "https://countriesnow.space/api/v0.1/countries/states";
@@ -458,26 +459,6 @@ const CheckOutScreen = ({ route, navigation }) => {
     payment_options: "card",
   };
 
-  const selectedCurrency = useSelector(
-    (state) => state.currency.selectedCurrency,
-  );
-  const conversionRates = useSelector((state) => state.currency.rates);
-
-  const convertPrice = (priceInNGN) => {
-    if (conversionRates[selectedCurrency]) {
-      return priceInNGN * conversionRates[selectedCurrency];
-    }
-    return priceInNGN;
-  };
-
-  const formatPrice = (price) => {
-    const convertedPrice = convertPrice(price);
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: selectedCurrency,
-    }).format(convertedPrice);
-  };
-
   const handleCountryChange = (country) => {
     setSelectedCountry(country);
     setSelectedState(null);
@@ -610,7 +591,7 @@ const CheckOutScreen = ({ route, navigation }) => {
                       fontFamily: "Poppins",
                     }}
                   >
-                    {formatPrice(totalPrice)}
+                    {formatNaira(totalPrice)}
                   </Text>
                 </View>
                 <View
@@ -640,7 +621,7 @@ const CheckOutScreen = ({ route, navigation }) => {
                     }}
                   >
                     {" "}
-                    {formatPrice(selectedLandmark?.landmark_price ?? 0)}
+                    {formatNaira(selectedLandmark?.landmark_price ?? 0)}
                   </Text>
                 </View>
                 <View
@@ -669,7 +650,7 @@ const CheckOutScreen = ({ route, navigation }) => {
                       fontFamily: "Poppins",
                     }}
                   >
-                    {formatPrice(DeliverytotalPrice)}
+                    {formatNaira(DeliverytotalPrice)}
                   </Text>
                 </View>
               </View>

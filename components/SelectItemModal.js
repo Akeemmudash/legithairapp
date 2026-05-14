@@ -14,9 +14,6 @@ import { useFetchCategoriesQuery } from "../redux/features/product/productApi";
 import { Colors } from "../utilities/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Thumb from "../assets/svg/thumbnail.svg";
-import { useDispatch, useSelector } from "react-redux";
-import { setSelectedCurrency } from "../redux/features/currencySlice";
-import { Picker } from "@react-native-picker/picker";
 
 const { width } = Dimensions.get("window");
 
@@ -33,17 +30,6 @@ const SelectItemModal = ({
 }) => {
   const { data, error, isLoading } = useFetchCategoriesQuery();
   const [expandedItems, setExpandedItems] = useState([]);
-
-
-  const dispatch = useDispatch();
-  const rates = useSelector((state) => state.currency.rates);
-  const selectedCurrency = useSelector(
-    (state) => state.currency.selectedCurrency,
-  );
-
-  const handleCurrencyChange = (currency) => {
-    dispatch(setSelectedCurrency(currency));
-  };
 
   if (isLoading) {
     return (

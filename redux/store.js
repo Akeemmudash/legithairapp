@@ -47,7 +47,6 @@ import { productApi } from "./features/product/productApi";
 import { profileApi } from "./features/profile/profileApi";
 import { orderApi } from "./features/order/orderApi";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import currencyReducer from "./features/currencySlice";
 import languageReducer from "./features/languageSlice";
 
 
@@ -55,7 +54,6 @@ const rootReducer = combineReducers({
   userAuth: authReducer,
   cart: cartReducer,
   savedProducts: savedProductsReducer,
-  currency: currencyReducer,
   language: languageReducer,
   [authApi.reducerPath]: authApi.reducer,
   [productApi.reducerPath]: productApi.reducer,

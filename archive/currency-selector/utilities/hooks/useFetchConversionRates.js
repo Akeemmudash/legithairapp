@@ -7,7 +7,7 @@ import { store } from "../../redux/store";
 const useFetchConversionRates = () => {
   const dispatch = useDispatch();
 
-  const API_KEY = "5e5ca8bd829f5a9bb5ef977f58b04551";
+  const API_KEY = process.env.EXPO_PUBLIC_EXCHANGERATESAPI_ACCESS_KEY;
 
   useEffect(() => {
     const fetchConversionRate = async () => {

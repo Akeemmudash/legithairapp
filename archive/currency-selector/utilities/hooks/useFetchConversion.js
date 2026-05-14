@@ -8,13 +8,14 @@ const useFetchConversion = (amount) => {
   const dispatch = useDispatch();
   const selectedCurrency = useSelector((state) => state.currency.selectedCurrency);
   const baseCurrency = 'NGN'; // or your base currency
+  const API_KEY = process.env.EXPO_PUBLIC_EXCHANGERATESAPI_ACCESS_KEY;
 
   useEffect(() => {
     const fetchConversion = async () => {
       try {
         const response = await axios.get('https://api.exchangeratesapi.io/v1/convert', {
           params: {
-            access_key: '15584ca7aa34077e6de577b9a017270b',
+            access_key: API_KEY,
             from: baseCurrency,
             to: selectedCurrency,
             amount,

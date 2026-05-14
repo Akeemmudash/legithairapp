@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,11 +6,11 @@ import MainContainer from '../../../components/MainContainer';
 import Back from '../../../components/Back';
 import { Colors } from '../../../utilities/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import ROUTES from '../../../Navigation/routes';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { addItem } from '../../../redux/features/cart/cartSlice';
 import StatusModal from '../../../components/StatusModal';
 import { useTranslate } from '../../../utilities/hooks/useTranslate';
+import formatNaira from '../../../utilities/formatNaira';
 
 const ProductDetails = ({ route, navigation }) => {
     const { product } = route.params;
@@ -21,10 +20,6 @@ const ProductDetails = ({ route, navigation }) => {
     const [modalAlertVisible, setModalAlertVisible] = useState(false);
     const [modalContent, setModalContent] = useState({ icon: '', message: '', buttonColor: '', iconColor: '' });
     const insets = useSafeAreaInsets();
-
-    const rates = useSelector((state) => state.currency.rates);
-    const selectedCurrency = useSelector((state) => state.currency.selectedCurrency);
-
 
     useEffect(() => {
         if (product.inches && product.inches.length > 0) {
@@ -37,25 +32,20 @@ const ProductDetails = ({ route, navigation }) => {
         setSelectedInch(inch);
     };
 
-
     const handleAddToCart = () => {
-        // if (!selectedInch) return;
-
         const price = selectedInch ? selectedInch.price : product.price;
-
-
         const uniqueKey = `${product.id}-${selectedInch?.inche}`;
 
         const cartItem = {
-            id: uniqueKey, 
-            productId: product.id, 
+            id: uniqueKey,
+            productId: product.id,
             name: product.product_name,
             price,
             image: product.images[0].filename,
             category_id: product.category_id,
-            selectedInch: selectedInch || null, 
+            selectedInch: selectedInch || null,
         };
-    
+
         dispatch(addItem(cartItem));
         setModalContent({
             icon: 'checkmark-circle-outline',
@@ -65,20 +55,6 @@ const ProductDetails = ({ route, navigation }) => {
         });
         setModalAlertVisible(true);
     };
-
-  const conversionRates = useSelector(state => state.currency.rates);
-
-    const convertPrice = (priceInNGN) => {
-        if (conversionRates[selectedCurrency]) {
-          return priceInNGN * conversionRates[selectedCurrency];
-        }
-        return priceInNGN;
-      };
-    
-      const formatPrice = (price) => {
-        const convertedPrice = convertPrice(price);
-        return new Intl.NumberFormat('en-NG', { style: 'currency', currency: selectedCurrency }).format(convertedPrice);
-      };
 
     const shortened_name = product.product_name.split(' ').slice(0, 10).join(' ');
     const isInchAvailable = product.inches && product.inches.length > 0;
@@ -96,6 +72,7 @@ const ProductDetails = ({ route, navigation }) => {
       ];
 
       const translate = useTranslate(texts);
+
     return (
         <>
             <MainContainer style={styles.container}>
@@ -141,12 +118,12 @@ const ProductDetails = ({ route, navigation }) => {
                     <View style={styles.priceContainer}>
                         <Text style={styles.discountPrice}>
                             {selectedInch && selectedInch.discount > 0
-                                ? formatPrice(selectedInch.discount)
-                                : formatPrice(selectedInch?.price || product.price)}
+                                ? formatNaira(selectedInch.discount)
+                                : formatNaira(selectedInch?.price || product.price)}
                         </Text>
                         {selectedInch && selectedInch.discount > 0 ? (
                             <Text style={styles.originalPrice}>
-                                {formatPrice(selectedInch.price)}
+                                {formatNaira(selectedInch.price)}
                             </Text>
                         ) : null}
 
@@ -218,6 +195,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+    },
+    stateContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    stateText: {
+        color: Colors.Black_00,
+        fontSize: 16,
+        fontWeight: '500',
+        fontFamily: "Poppins",
+        textAlign: 'center',
     },
     priceContainer: {
         flexDirection: 'row',
@@ -407,5 +396,3 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins",
     },
 });
-
-
