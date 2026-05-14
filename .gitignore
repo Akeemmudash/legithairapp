@@ -32,5 +32,18 @@ yarn-error.*
 # local env files
 .env*.local
 
+# local tooling
+.vscode/
+
+# local npm config overrides (do not ignore .npmrc if it is required for EAS builds)
+.npmrc.local
+.npmrc.*.local
+
+# credentials / secrets
+legithairnng-5f748f2e0335.json
+
 # typescript
 *.tsbuildinfo
+
+/ios
+/android
