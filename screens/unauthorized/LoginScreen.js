@@ -134,8 +134,8 @@ const LoginScreen = ({ navigation }) => {
           }) => (
             <>
               <CustomTextInput
-                label="Phone Number"
-                type="number"
+                label="Email"
+                type="email"
                 value={values.login}
                 isInvalid={!!errors.login}
                 onChangeText={handleChange("login")}
