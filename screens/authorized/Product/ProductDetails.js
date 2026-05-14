@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MainContainer from '../../../components/MainContainer';
 import Back from '../../../components/Back';
@@ -10,27 +10,75 @@ import { useDispatch } from 'react-redux';
 import { addItem } from '../../../redux/features/cart/cartSlice';
 import StatusModal from '../../../components/StatusModal';
 import { useTranslate } from '../../../utilities/hooks/useTranslate';
+import { useSearchProductsQuery } from '../../../redux/features/product/productApi';
 import formatNaira from '../../../utilities/formatNaira';
 
-const ProductDetails = ({ route, navigation }) => {
-    const { product } = route.params;
-    const [selectedImage, setSelectedImage] = useState(product.images[0]);
+const ProductDetails = ({ route }) => {
+    const initialProduct = route?.params?.product ?? null;
+    const productId = route?.params?.productId ?? initialProduct?.id ?? null;
+    const [selectedImage, setSelectedImage] = useState(initialProduct?.images?.[0] ?? null);
     const [selectedInch, setSelectedInch] = useState(null);
     const dispatch = useDispatch();
     const [modalAlertVisible, setModalAlertVisible] = useState(false);
     const [modalContent, setModalContent] = useState({ icon: '', message: '', buttonColor: '', iconColor: '' });
     const insets = useSafeAreaInsets();
 
+    const {
+        data: searchData,
+        isLoading: isProductLoading,
+        isFetching: isProductFetching,
+        error: productError,
+    } = useSearchProductsQuery(productId, {
+        skip: Boolean(initialProduct) || !productId,
+    });
+
+    const matchedProduct = searchData?.data?.find(
+        (item) => `${item.id}` === `${productId}`
+    );
+    const resolvedProduct =
+        initialProduct ??
+        matchedProduct ??
+        (searchData?.data?.length === 1 ? searchData.data[0] : null);
+
     useEffect(() => {
-        if (product.inches && product.inches.length > 0) {
-            setSelectedInch(product.inches[0]);
+        if (!resolvedProduct) {
+            return;
         }
-    }, [product.inches]);
+
+        setSelectedImage(resolvedProduct.images?.[0] ?? null);
+        setSelectedInch(resolvedProduct.inches?.[0] ?? null);
+    }, [resolvedProduct?.id]);
 
 
     const handleInchSelect = (inch) => {
         setSelectedInch(inch);
     };
+
+    if ((isProductLoading || isProductFetching) && !resolvedProduct) {
+        return (
+            <MainContainer style={styles.container}>
+                <Back title="View Product" />
+                <View style={styles.stateContainer}>
+                    <ActivityIndicator size="large" color={Colors.Orange} />
+                </View>
+            </MainContainer>
+        );
+    }
+
+    if (!resolvedProduct) {
+        return (
+            <MainContainer style={styles.container}>
+                <Back title="View Product" />
+                <View style={styles.stateContainer}>
+                    <Text style={styles.stateText}>
+                        {productError ? 'Unable to load this product right now.' : 'Product not found.'}
+                    </Text>
+                </View>
+            </MainContainer>
+        );
+    }
+
+    const product = resolvedProduct;
 
     const handleAddToCart = () => {
         const price = selectedInch ? selectedInch.price : product.price;
@@ -72,6 +120,7 @@ const ProductDetails = ({ route, navigation }) => {
       ];
 
       const translate = useTranslate(texts);
+    const displayImage = selectedImage ?? product.images?.[0];
 
     return (
         <>
@@ -80,7 +129,7 @@ const ProductDetails = ({ route, navigation }) => {
                     <Back title={translate("View Product")} />
                     <ScrollView>
                         <View style={styles.imageContainer}>
-                            <Image source={{ uri: selectedImage.filename }} style={styles.selectedImage} resizeMode="cover" />
+                            <Image source={{ uri: displayImage?.filename }} style={styles.selectedImage} resizeMode="cover" />
                         </View>
                         <View style={styles.thumbnailContainer}>
                             {product.images.map((image, index) => (
