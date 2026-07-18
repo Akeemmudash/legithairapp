@@ -18,9 +18,7 @@
       "buildNumber": "12",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "LSApplicationQueriesSchemes": [
-          "whatsapp"
-        ]
+        "LSApplicationQueriesSchemes": ["whatsapp"]
       }
     },
     "android": {
@@ -48,7 +46,16 @@
     "plugins": [
       "expo-font",
       "expo-asset",
-      "expo-system-ui"
+      "expo-system-ui",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "buildReactNativeFromSource": false
+          }
+        }
+      ],
+      "./plugins/withFmtConstevalFix"
     ],
     "owner": "techstackcompany"
   }

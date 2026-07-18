@@ -1,7 +1,7 @@
 {
   "name": "legithair",
   "version": "1.0.0",
-  "main": "expo/AppEntry.js",
+  "main": "index.js",
   "scripts": {
     "start": "expo start --tunnel",
     "android": "expo run:android",
@@ -20,6 +20,7 @@
     "debounce": "^2.1.0",
     "expo": "~53.0.27",
     "expo-asset": "~11.1.7",
+    "expo-build-properties": "^0.14.8",
     "expo-clipboard": "~7.1.5",
     "expo-dev-client": "~5.2.4",
     "expo-env": "^1.1.1",
