@@ -215,6 +215,12 @@ const CheckOutScreen = ({ route, navigation }) => {
   // const DeliverytotalPrice = totalPrice + (selectedLandmark?.landmark_price ?? 0);
   const DeliverytotalPrice =
     (Number(totalPrice) || 0) + (Number(selectedLandmark?.landmark_price) || 0);
+
+  // Landmarks (and their delivery fees) only apply within Nigeria. For any other
+  // country the buyer arranges the fee with support, so we skip the landmark
+  // requirement and still let them proceed to payment.
+  const isOutsideNigeria = !!selectedCountry && selectedCountry !== "Nigeria";
+  const SUPPORT_PHONE = "+234 703 974 0855";
   // const [modalAlertVisible, setModalAlertVisible] = useState(false);
   // const [modalContent, setModalContent] = useState({ icon: '', message: '', buttonColor: "" });
   const handleCloseModal = () => {
@@ -226,6 +232,17 @@ const CheckOutScreen = ({ route, navigation }) => {
     setModalContent({
       icon: "checkmark-circle-outline",
       message: "Account number Copied to Clipboard",
+      buttonColor: Colors.Orange,
+      iconColor: Colors.Orange,
+    });
+    setModalAlertVisible(true);
+  };
+
+  const copySupportPhone = () => {
+    Clipboard.setString(SUPPORT_PHONE);
+    setModalContent({
+      icon: "checkmark-circle-outline",
+      message: "Support number Copied to Clipboard",
       buttonColor: Colors.Orange,
       iconColor: Colors.Orange,
     });
@@ -553,12 +570,53 @@ const CheckOutScreen = ({ route, navigation }) => {
                     />
                   </View>
                 </View>
-                <LandMarkCustomDropdown
-                  label="LandMarks"
-                  options={landmarks || []}
-                  selectedValue={selectedLandmark}
-                  onSelect={setSelectedLandmark}
-                />
+                {isOutsideNigeria ? (
+                  <View style={styles.contactBox}>
+                    <Text style={styles.contactText}>
+                      Contact supplier for delivery fee
+                    </Text>
+                    <View style={styles.contactPhoneRow}>
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        onPress={() =>
+                          Linking.openURL(
+                            `tel:${SUPPORT_PHONE.replace(/\s/g, "")}`,
+                          )
+                        }
+                      >
+                        <Text style={styles.contactPhone}>{SUPPORT_PHONE}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.buttonWishlist}
+                        activeOpacity={0.6}
+                        onPress={copySupportPhone}
+                      >
+                        <Text
+                          style={{
+                            color: Colors.Orange,
+                            fontSize: 14,
+                            fontWeight: "500",
+                          }}
+                        >
+                          {translate("Copy")}
+                        </Text>
+                        <Ionicons
+                          name="copy-outline"
+                          size={15}
+                          color={Colors.Orange}
+                          style={{ marginLeft: 1 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
+                  <LandMarkCustomDropdown
+                    label="LandMarks"
+                    options={landmarks || []}
+                    selectedValue={selectedLandmark}
+                    onSelect={setSelectedLandmark}
+                  />
+                )}
               </View>
             )}
 
@@ -829,7 +887,11 @@ const CheckOutScreen = ({ route, navigation }) => {
                       return;
                     }
 
-                    if (selectedPlace === "Delivery" && !selectedLandmark) {
+                    if (
+                      selectedPlace === "Delivery" &&
+                      !isOutsideNigeria &&
+                      !selectedLandmark
+                    ) {
                       setModalContent({
                         icon: "close-circle-outline",
                         message:
@@ -877,7 +939,11 @@ const CheckOutScreen = ({ route, navigation }) => {
                     return;
                   }
 
-                  if (selectedPlace === "Delivery" && !selectedLandmark) {
+                  if (
+                    selectedPlace === "Delivery" &&
+                    !isOutsideNigeria &&
+                    !selectedLandmark
+                  ) {
                     setModalContent({
                       icon: "close-circle-outline",
                       message:
@@ -1008,6 +1074,33 @@ const styles = StyleSheet.create({
   scrollContent2: {
     paddingHorizontal: 5,
     paddingVertical: 10,
+  },
+  contactBox: {
+    borderWidth: 1,
+    borderColor: Colors.Orange,
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 10,
+    backgroundColor: Colors.White,
+  },
+  contactText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: Colors.Black_00,
+    fontFamily: "Poppins",
+  },
+  contactPhoneRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  contactPhone: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.Orange,
+    fontFamily: "Poppins",
+    marginBottom: 10,
   },
 });
 

@@ -53,8 +53,8 @@ const ProductScreen = ({ navigation }) => {
     data: searchData,
     error: searchError,
     isLoading: isSearching,
-  } = useSearchProductsQuery(selectedId || searchText || selectedCategoryText, {
-    skip: !searchText && !selectedId && !selectedCategoryText,
+  } = useSearchProductsQuery(selectedId || searchText, {
+    skip: !searchText && !selectedId,
   });
 
   const { full_name, phone, email } = useSelector((state) => state.userAuth);
@@ -87,14 +87,14 @@ const ProductScreen = ({ navigation }) => {
   const renderFooter = useMemo(
     () => (
       <View style={styles.footer}>
-        {isLoading || isFetching ? (
+        {isFetching && hasMore && products.length > 0 ? (
           <ActivityIndicator size="large" color={Colors.Orange} />
         ) : !hasMore && products.length > 0 ? (
           <Text style={styles.noMoreProducts}>No more products available</Text>
         ) : null}
       </View>
     ),
-    [isLoading, isFetching, hasMore, products.length],
+    [isFetching, hasMore, products.length],
   );
 
   const [saveProduct] = useSaveProductMutation();
@@ -171,6 +171,7 @@ const ProductScreen = ({ navigation }) => {
   };
 
   const handleSelectCategoryText = (text) => {
+    console.log("text", text);
     setSelectedCategoryText(text);
     setSearchText("");
     setSelectedId(null);
@@ -263,21 +264,25 @@ const ProductScreen = ({ navigation }) => {
               <ActivityIndicator size="large" color={Colors.Orange} />
               <Text style={styles.emptyText}>Searching...</Text>
             </View>
-          ) : (searchText || selectedId)
-            ? searchData?.data?.length === 0 ? (
-                <View style={styles.emptyContainer}>
-                  <Ionicons name="search-outline" size={60} color={Colors.Ash} />
-                  <Text style={styles.emptyText}>
-                    {`No products found for "${searchText || selectedId}"`}
-                  </Text>
-                </View>
-              ) : null
-            : !isLoading && !isFetching && data?.data?.length === 0 ? (
-                <View style={styles.emptyContainer}>
-                  <Ionicons name="search-outline" size={60} color={Colors.Ash} />
-                  <Text style={styles.emptyText}>No products available</Text>
-                </View>
-              ) : null
+          ) : searchText || selectedId ? (
+            searchData?.data?.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="search-outline" size={60} color={Colors.Ash} />
+                <Text style={styles.emptyText}>
+                  {`No products found for "${searchText || selectedId}"`}
+                </Text>
+              </View>
+            ) : null
+          ) : isLoading || isFetching ? (
+            <View style={styles.emptyContainer}>
+              <ActivityIndicator size="large" color={Colors.Orange} />
+            </View>
+          ) : data?.data?.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="search-outline" size={60} color={Colors.Ash} />
+              <Text style={styles.emptyText}>No products available</Text>
+            </View>
+          ) : null
         }
         ListFooterComponent={renderFooter}
         getItemLayout={(data, index) => ({
@@ -293,6 +298,7 @@ const ProductScreen = ({ navigation }) => {
         onSelectItem={handleSelectItem}
         onSelectItemText={handleSelectCategoryText}
         selectedText={selectedCategoryText}
+        selectedId={selectedId}
       />
 
       <StatusModal
@@ -316,6 +322,7 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     width: 246,
     fontFamily: "Poppins",
+    marginBottom: 20,
   },
   searchContainer: {
     paddingVertical: 10,

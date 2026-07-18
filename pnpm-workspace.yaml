@@ -1,2 +1,5 @@
+# React Native / Expo tooling (Metro, Babel, native scripts) assumes a flat
+# node_modules. Force pnpm to build one instead of its default symlinked store.
+nodeLinker: hoisted
 allowBuilds:
   core-js: true

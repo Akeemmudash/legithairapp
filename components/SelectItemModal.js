@@ -14,12 +14,9 @@ import { useFetchCategoriesQuery } from "../redux/features/product/productApi";
 import { Colors } from "../utilities/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Thumb from "../assets/svg/thumbnail.svg";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
-
-const isStringEqual = (str1, str2) => {
-  return str1.toLowerCase() === str2.toLowerCase();
-};
 
 const SelectItemModal = ({
   visible,
@@ -27,6 +24,7 @@ const SelectItemModal = ({
   onSelectItem,
   onSelectItemText,
   selectedText,
+  selectedId,
 }) => {
   const { data, error, isLoading } = useFetchCategoriesQuery();
   const [expandedItems, setExpandedItems] = useState([]);
@@ -93,7 +91,7 @@ const SelectItemModal = ({
           onPress={() =>
             hasChildren
               ? handlePressItem(item.id)
-              : handleSelectText(item?.name)
+              : handleFinalItemPress(item?.id)
           }
         >
           <View style={styles.itemRow}>
@@ -110,7 +108,8 @@ const SelectItemModal = ({
             ) : (
               <Ionicons
                 name={
-                  isStringEqual(item.name, selectedText)
+                  !isNaN(Number(item.id)) &&
+                  Number(item.id) === Number(selectedId)
                     ? "radio-button-on-outline"
                     : "radio-button-off-outline"
                 }
@@ -163,23 +162,25 @@ const SelectItemModal = ({
     >
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Thumb style={styles.thumb} />
-            <TouchableOpacity
-              onPress={onClose}
-              style={styles.closeButtonContainer}
-            >
-              <Ionicons name="close" size={40} color={Colors.Orange} />
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginTop: 30, padding: 5 }}>
-            <FlatList
-              data={data || []}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderItem}
-              ListFooterComponent={<View style={styles.footer} />}
-            />
-          </View>
+          <SafeAreaView edges={["top"]}>
+            <View style={styles.header}>
+              <Thumb style={styles.thumb} />
+              <TouchableOpacity
+                onPress={onClose}
+                style={styles.closeButtonContainer}
+              >
+                <Ionicons name="close" size={40} color={Colors.Orange} />
+              </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 30, padding: 5 }}>
+              <FlatList
+                data={data.concat({ name: "All", id: 0 })}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderItem}
+                ListFooterComponent={<View style={styles.footer} />}
+              />
+            </View>
+          </SafeAreaView>
         </View>
       </Pressable>
     </Modal>
