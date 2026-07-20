@@ -318,8 +318,18 @@ const CheckOutScreen = ({ route, navigation }) => {
           navigation.goBack();
           navigation.navigate("Home", { screen: ROUTES.PRODUCT_SCREEN });
 
-          // Proceed to open WhatsApp
-          const phoneNumber = customer_care?.replace(/\D/g, "");
+          // Proceed to open WhatsApp. WhatsApp needs a full international number
+          // with no '+' and no leading zero, so normalise the stored value:
+          //   "+234 803..." / "234803..." -> "234803..." (already correct)
+          //   "00234803..."               -> "234803..."
+          //   "0803..." (local NG)        -> "234803..."
+          console.log(customer_care);
+          let phoneNumber = (customer_care || "").replace(/\D/g, "");
+          if (phoneNumber.startsWith("00")) {
+            phoneNumber = phoneNumber.slice(2);
+          } else if (phoneNumber.startsWith("0")) {
+            phoneNumber = `234${phoneNumber.slice(1)}`;
+          }
           const message = encodeURIComponent(
             `Hello, I would like to confirm my order with My Receipt.`,
           );

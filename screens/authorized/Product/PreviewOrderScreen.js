@@ -6,10 +6,13 @@ import { Colors } from '../../../utilities/colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Back from '../../../components/Back';
 import ROUTES from '../../../Navigation/routes';
+import { useSelector } from 'react-redux';
+import { requireAuth } from '../../../utilities/requireAuth';
 
 const PreviewOrderScreen = ({ route, navigation }) => {
     const { product, selectedSize } = route.params;
     const [discountText, setDiscountText] = useState("");
+    const token = useSelector((state) => state.userAuth.token);
 
     return (
         <MainContainer>
@@ -93,7 +96,7 @@ const PreviewOrderScreen = ({ route, navigation }) => {
                         backgroundColor={Colors.Orange}
                         borderColor={Colors.Orange}
                         color={Colors.White}
-                        onPress={() => navigation.navigate(ROUTES.CHECK_OUT_SCREEN, { product, selectedSize })}
+                        onPress={() => requireAuth(token, navigation, () => navigation.navigate(ROUTES.CHECK_OUT_SCREEN, { product, selectedSize }))}
                     />
                 </View>
             </View>

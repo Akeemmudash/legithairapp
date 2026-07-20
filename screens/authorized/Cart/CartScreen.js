@@ -15,6 +15,7 @@ import { Colors } from "../../../utilities/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Back from "../../../components/Back";
 import ROUTES from "../../../Navigation/routes";
+import { requireAuth } from "../../../utilities/requireAuth";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearCart,
@@ -30,6 +31,7 @@ const CartScreen = ({ route, navigation }) => {
   const [discountText, setDiscountText] = useState("");
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
+  const token = useSelector((state) => state.userAuth.token);
 
   const handleRemoveItem = (id, selectedSize) => {
     dispatch(removeItem({ id, selectedSize }));
@@ -310,10 +312,12 @@ const CartScreen = ({ route, navigation }) => {
           borderColor={Colors.Orange}
           color={Colors.White}
           onPress={() =>
-            navigation.navigate(ROUTES.CHECK_OUT_SCREEN, {
-              cartItems,
-              totalPrice,
-            })
+            requireAuth(token, navigation, () =>
+              navigation.navigate(ROUTES.CHECK_OUT_SCREEN, {
+                cartItems,
+                totalPrice,
+              }),
+            )
           }
         />
       </View>
