@@ -165,6 +165,9 @@ importers:
       '@babel/plugin-transform-template-literals':
         specifier: ^7.24.7
         version: 7.29.7(@babel/core@7.29.7)
+      babel-preset-expo:
+        specifier: ~13.2.5
+        version: 13.2.5(@babel/core@7.29.7)
       baseline-browser-mapping:
         specifier: ^2.10.21
         version: 2.10.43
