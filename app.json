@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.techstackcompany.legithair",
-      "buildNumber": "17",
+      "buildNumber": "19",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "LSApplicationQueriesSchemes": [
@@ -31,7 +31,7 @@
       "userInterfaceStyle": "light",
       "edgeToEdgeEnabled": true,
       "package": "com.techstackcompany.legithair",
-      "versionCode": 20
+      "versionCode": 24
     },
     "web": {
       "favicon": "./assets/icon.png"

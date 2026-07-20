@@ -1,3 +1,9 @@
+# Single-package repo (not a monorepo). The root itself is the only "package";
+# this `packages` field keeps stricter/older pnpm from erroring with
+# "packages field missing or empty" when it reads this workspace file.
+packages:
+  - .
+
 # React Native / Expo tooling (Metro, Babel, native scripts) assumes a flat
 # node_modules. Force pnpm to build one instead of its default symlinked store.
 nodeLinker: hoisted
