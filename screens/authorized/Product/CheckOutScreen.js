@@ -333,23 +333,26 @@ const CheckOutScreen = ({ route, navigation }) => {
           const message = encodeURIComponent(
             `Hello, I would like to confirm my order with My Receipt.`,
           );
-          const url = `whatsapp://send?phone=${phoneNumber}&text=${message}`;
+          // Use the wa.me universal link rather than the `whatsapp://` scheme.
+          // Being https, it needs no Android <queries> entry (package
+          // visibility on API 30+ makes canOpenURL('whatsapp://') return false
+          // even when WhatsApp is installed) and no iOS
+          // LSApplicationQueriesSchemes, so it also works on older binaries
+          // that predate that plist change. It is handled by both WhatsApp and
+          // WhatsApp Business, and falls back to the browser when neither is
+          // installed - hence no canOpenURL guard.
+          const url = `https://wa.me/${phoneNumber}?text=${message}`;
 
-          Linking.canOpenURL(url)
-            .then((supported) => {
-              if (supported) {
-                return Linking.openURL(url);
-              } else {
-                setModalContent({
-                  icon: "close-circle-outline",
-                  message: "WhatsApp not installed",
-                  buttonColor: Colors.Orange,
-                  iconColor: Colors.Orange,
-                });
-                setModalAlertVisible(true);
-              }
-            })
-            .catch((error) => console.error("Error opening WhatsApp:", error));
+          Linking.openURL(url).catch((error) => {
+            console.error("Error opening WhatsApp:", error);
+            setModalContent({
+              icon: "close-circle-outline",
+              message: "Could not open WhatsApp",
+              buttonColor: Colors.Orange,
+              iconColor: Colors.Orange,
+            });
+            setModalAlertVisible(true);
+          });
         }, 2000);
       } else {
         setModalContent({

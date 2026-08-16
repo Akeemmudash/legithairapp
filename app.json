@@ -31,7 +31,7 @@
       "userInterfaceStyle": "light",
       "edgeToEdgeEnabled": true,
       "package": "com.techstackcompany.legithair",
-      "versionCode": 25
+      "versionCode": 29
     },
     "web": {
       "favicon": "./assets/icon.png"

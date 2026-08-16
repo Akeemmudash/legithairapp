@@ -1,4 +1,4 @@
-export const BASE_URL = "https://legithairng.com/backend";
+export const BASE_URL = "https://backend.legithairng.com/backend";
 // export const BASE_URL = "http://testbackendproject.pluralcode.academy";
 export const LOGIN_URL = "user/login-user";
 export const SIGN_UP_URL = "user/register-user";

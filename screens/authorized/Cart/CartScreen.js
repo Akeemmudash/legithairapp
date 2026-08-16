@@ -71,6 +71,9 @@ const CartScreen = ({ route, navigation }) => {
     "Total",
     "Cart",
     "Inches",
+    "Your cart is empty",
+    "Browse our collection and add a few pieces you love.",
+    "Start shopping",
     itemNames,
   ];
 
@@ -206,20 +209,45 @@ const CartScreen = ({ route, navigation }) => {
     </View>
   );
 
+  // An empty cart gets its own screen rather than an empty list: the summary
+  // card and Proceed button are meaningless with nothing in the cart (they
+  // showed a NGN 0 total and still let you reach checkout).
+  if (cartItems.length === 0) {
+    return (
+      <MainContainer>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.screenTitle}>{translate("Cart")}</Text>
+          <View style={styles.emptyState}>
+            <View style={styles.emptyIconCircle}>
+              <Ionicons name="cart-outline" size={52} color={Colors.Orange} />
+            </View>
+            <Text style={styles.emptyTitle}>
+              {translate("Your cart is empty")}
+            </Text>
+            <Text style={styles.emptyMessage}>
+              {translate("Browse our collection and add a few pieces you love.")}
+            </Text>
+            <View style={styles.emptyAction}>
+              <CustomButton
+                title={translate("Start shopping")}
+                backgroundColor={Colors.Orange}
+                borderColor={Colors.Orange}
+                color={Colors.White}
+                onPress={() =>
+                  navigation.navigate("Home", { screen: ROUTES.PRODUCT_SCREEN })
+                }
+              />
+            </View>
+          </View>
+        </View>
+      </MainContainer>
+    );
+  }
+
   return (
     <MainContainer>
       <View style={{ flex: 1 }}>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: "600",
-            color: Colors.Black_00,
-            paddingVertical: 10,
-            fontFamily: "Poppins",
-          }}
-        >
-          {translate("Cart")}
-        </Text>
+        <Text style={styles.screenTitle}>{translate("Cart")}</Text>
         <FlatList
           data={cartItems}
           renderItem={renderItem}
@@ -326,6 +354,49 @@ const CartScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  screenTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.Black_00,
+    paddingVertical: 10,
+    fontFamily: "Poppins",
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyIconCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    // Colors.Orange at 12% - the accent the tab badge and quantity buttons
+    // already use, dialled down so the icon reads as the focal point.
+    backgroundColor: "rgba(255, 150, 46, 0.12)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 24,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: Colors.Black_00,
+    fontFamily: "Poppins",
+    textAlign: "center",
+  },
+  emptyMessage: {
+    fontSize: 13,
+    color: Colors.Ash,
+    fontFamily: "Poppins",
+    textAlign: "center",
+    lineHeight: 20,
+    maxWidth: 260,
+    marginTop: 8,
+  },
+  emptyAction: {
+    width: 200,
+    marginTop: 24,
+  },
   scrollContent: {
     paddingHorizontal: 5,
     paddingVertical: 10,
